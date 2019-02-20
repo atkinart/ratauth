@@ -33,11 +33,11 @@ public class HazelcastCachingService implements CachingService {
     public HazelcastCachingService(HazelcastServiceConfiguration hazelcastServiceConfiguration, IdentityProvidersConfiguration identityProvidersConfiguration) {
         this.hazelcastServiceConfiguration = hazelcastServiceConfiguration;
         this.identityProvidersConfiguration = identityProvidersConfiguration;
-        configure();
+        this.hazelcastInstance = HazelcastClient.newHazelcastClient(configure());
     }
 
     public void checkAttemptCount(CachingUserKey countKey, int maxAttempts, int maxAttemptsTTL) {
-        IMap<CachingUserKey, Integer> attemptCacheCount = getInstance().getMap(ATTEMPT_COUNT_MAP_NAME);
+        IMap<CachingUserKey, Integer> attemptCacheCount = hazelcastInstance.getMap(ATTEMPT_COUNT_MAP_NAME);
         int countValue = attemptCacheCount.get(countKey) == null ? 0 : attemptCacheCount.get(countKey);
 
         if (countValue < maxAttempts) {
@@ -84,10 +84,4 @@ public class HazelcastCachingService implements CachingService {
         return config;
     }
 
-    private HazelcastInstance getInstance() {
-        if (hazelcastInstance == null) {
-            hazelcastInstance = HazelcastClient.newHazelcastClient(configure());
-        }
-        return hazelcastInstance;
-    }
 }
