@@ -1,5 +1,9 @@
 package ru.ratauth;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.config.GroupConfig;
+import com.hazelcast.config.NetworkConfig;
+import com.hazelcast.core.Hazelcast;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -17,7 +21,16 @@ public class RatAuthServerTest {
     private static final int DEFAULT_RATPACK_PORT = 5050;
     private ConfigurableApplicationContext context;
 
+    private void createHazelcastServer() {
+        Hazelcast.shutdownAll();
+        Config config = new Config().setNetworkConfig(new NetworkConfig().setPort(5701).setPublicAddress("localhost"))
+                .setGroupConfig(new GroupConfig().setName("ratauth").setPassword("ratauth"))
+                .setInstanceName("dev");
+        Hazelcast.getOrCreateHazelcastInstance(config);
+    }
+
     private void registerAndRefresh(Class<?> configClass, String... properties) {
+        createHazelcastServer();
         HashMap<String, Object> mergedPropsMap = mergePropertiesWithDefault(properties);
         context = new SpringApplicationBuilder(configClass)
                 .web(false)

@@ -36,6 +36,4 @@ ratauth.hazelcast:
   name: ratauth
   password: ratauth
   nodes:
-    - ratauth1
-    - ratauth2
-    - ratauth3
+    - localhost

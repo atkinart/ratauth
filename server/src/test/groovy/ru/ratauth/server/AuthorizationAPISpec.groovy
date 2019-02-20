@@ -40,6 +40,10 @@ class AuthorizationAPISpec extends BaseDocumentationSpec {
     @Autowired
     ObjectMapper objectMapper
 
+    def setupSpec() {
+        createHazelcastInstance()
+    }
+
     def 'should get authorization code'() {
         given:
         createHazelcastInstance()
@@ -469,4 +473,5 @@ class AuthorizationAPISpec extends BaseDocumentationSpec {
                 instanceName: "dev"
         ))
     }
+
 }
